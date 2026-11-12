@@ -1,0 +1,43 @@
+PRÁCTICA UNIDAD 1 - PRIMERA APP EN FLUTTER (Namer App)
+=====================================================
+
+Repositorio: https://github.com/jacielrdgz/Unidad2Moviles
+Carpeta de la práctica: PRACTICASU1/flutter_application_1
+
+Qué hace la app:
+Muestra una combinación aleatoria de dos palabras en inglés ("A random idea:")
+y un botón "Next" que genera una combinación nueva. Usa los paquetes
+english_words y provider, como indica el documento "Flutter inicios".
+
+Requisitos:
+- Flutter SDK instalado (comprobar con: flutter doctor)
+- Visual Studio Code con la extensión de Flutter
+- Para ejecutar en Windows: Visual Studio con "Desarrollo de escritorio con C++"
+  (también funciona en Chrome o en un emulador de Android)
+
+Pasos para abrirla y ejecutarla:
+
+1. Descargar el proyecto:
+   git clone https://github.com/jacielrdgz/Unidad2Moviles.git
+   (o en GitHub: botón "Code" > "Download ZIP" y descomprimir)
+
+2. En Visual Studio Code: File > Open Folder... y seleccionar
+   Unidad2Moviles/PRACTICASU1/flutter_application_1
+
+3. Si VS Code pregunta si confías en los autores, seleccionar "Yes, I trust the authors".
+
+4. Abrir una terminal en VS Code (Terminal > New Terminal) y ejecutar:
+   flutter pub get
+
+5. Elegir el dispositivo en la esquina inferior derecha de VS Code
+   (Windows, Chrome o un emulador).
+
+6. Abrir lib/main.dart y presionar F5 (o el botón "Run" arriba a la derecha).
+   También desde la terminal:
+   flutter run -d windows
+   flutter run -d chrome
+
+7. Al abrirse la app, presionar "Next" para generar nuevas palabras.
+
+Prueba automática (opcional):
+   flutter test
