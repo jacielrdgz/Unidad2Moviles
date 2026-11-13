@@ -27,10 +27,8 @@ void connectWiFi() {
     delay(500);
     Serial.print(".");
   }
-  if (WiFi.status() == WL_CONNECTED) Serial.println("
-[OK] Conectado a la Red Wi-Fi");
-  else Serial.println("
-[WARN] Sin Wi-Fi, sigo con alarma local");
+  if (WiFi.status() == WL_CONNECTED) Serial.println("\n[OK] Conectado a la Red Wi-Fi");
+  else Serial.println("\n[WARN] Sin Wi-Fi, sigo con alarma local");
 }
 
 unsigned long lastReconnect = 0;
