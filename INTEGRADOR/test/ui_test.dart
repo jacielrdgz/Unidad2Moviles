@@ -10,14 +10,17 @@ class FakeRepo implements EstacionRepo {
   final lecturas = StreamController<Telemetria?>.broadcast();
   final listaAlarmas = StreamController<List<Alarma>>.broadcast();
   final cambios = <(int, String)>[];
+  bool falla = false;
 
   @override
   Stream<Telemetria?> ultimaLectura() => lecturas.stream;
   @override
   Stream<List<Alarma>> alarmas() => listaAlarmas.stream;
   @override
-  Future<void> cambiarEstado(int id, String status) async =>
-      cambios.add((id, status));
+  Future<void> cambiarEstado(int id, String status) async {
+    if (falla) throw Exception('RLS');
+    cambios.add((id, status));
+  }
 }
 
 Telemetria lectura(DateTime t, {double temp = 24.1}) => Telemetria(
@@ -94,6 +97,8 @@ void main() {
     await t.pump();
     await t.pump(const Duration(milliseconds: 100));
     expect(find.text('High Temperature Alarm – 31.2 °C'), findsOneWidget);
+    expect(t.widget<SnackBar>(find.byType(SnackBar)).backgroundColor,
+        Colors.red);
     await t.pump(const Duration(seconds: 8));
     await t.pump(const Duration(seconds: 5));
     await t.pump(const Duration(seconds: 1));
@@ -119,6 +124,29 @@ void main() {
     await t.pump();
     expect(find.text('Reconocer'), findsNothing);
     expect(find.text('Borrar'), findsNothing);
+    await cerrar(t);
+  });
+
+  testWidgets('error de stream muestra mensaje', (t) async {
+    await abrir(t);
+    repo.listaAlarmas.addError(Exception('caido'));
+    await t.pump();
+    await t.pump(const Duration(milliseconds: 100));
+    expect(find.textContaining('Error de conexión'), findsOneWidget);
+    await cerrar(t);
+  });
+
+  testWidgets('cambiarEstado que falla muestra mensaje', (t) async {
+    repo.falla = true;
+    await abrir(t);
+    repo.listaAlarmas.add([alarma(7, 31)]);
+    await t.pump();
+    await t.tap(find.text('Alarmas (1 activas)'));
+    await t.pumpAndSettle(const Duration(milliseconds: 100), EnginePhase.sendSemanticsUpdate, const Duration(seconds: 3));
+    await t.tap(find.text('Reconocer'));
+    await t.pump();
+    await t.pump(const Duration(milliseconds: 100));
+    expect(find.textContaining('No se pudo cambiar el estado'), findsOneWidget);
     await cerrar(t);
   });
 }
