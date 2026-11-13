@@ -105,5 +105,5 @@ void loop() {
     http.end();
   }
 
-  delay(4000);
+  delay(2000);  // mínimo del DHT11: la librería no da lecturas nuevas en menos de 2 s
 }
