@@ -59,7 +59,10 @@ alter table public.telemetria enable row level security;
 alter table public.alarmas enable row level security;
 
 grant select, insert on public.telemetria to anon;
-grant select, update on public.alarmas to anon;
+grant select on public.alarmas to anon;
+revoke update on public.alarmas from anon;
+-- Solo las columnas que usa la app (Reconocer/Borrar); type, severity y temperature quedan protegidas.
+grant update (status, ack_at, cleared_at) on public.alarmas to anon;
 grant usage on all sequences in schema public to anon;
 
 drop policy if exists "anon_insert" on public.telemetria;

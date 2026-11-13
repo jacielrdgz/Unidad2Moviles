@@ -87,8 +87,9 @@ En la pestaña **Alarmas**, cada fila ofrece los botones que aplican a su estado
 | `lib/config.dart` | URL y publishable key de la app. |
 
 ## Límites conocidos (para la sustentación)
-- La publishable key va en el firmware y en la app: quien la tenga puede **insertar telemetría**
-  (la RLS no le deja borrar ni crear alarmas directo; solo las crea la regla).
+- La publishable key va en el firmware y en la app. Quien la tenga puede **insertar telemetría**, **leer**
+  ambas tablas y cambiar solo `status`, `ack_at` y `cleared_at` de `alarmas` (Reconocer/Borrar). No puede crear
+  ni borrar alarmas: solo las crea la regla.
 - `client.setInsecure()` en el ESP32 **no valida el certificado TLS**. Para publicarlo habría que usar `setCACert`.
 - Las alertas (SnackBar) solo aparecen **con la app abierta**; no hay notificaciones push.
 
