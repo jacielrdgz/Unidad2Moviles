@@ -32,6 +32,7 @@ class _HomePageState extends State<HomePage> {
   final _subs = <StreamSubscription>[];
   final _vistas = <int>{};
   Telemetria? _lectura;
+  DateTime? _recibida; // hora local de llegada: evita depender del reloj del visor vs servidor
   List<Alarma> _alarmas = [];
   bool _primera = true;
 
@@ -39,7 +40,10 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _subs.add(widget.repo.ultimaLectura().listen(
-        (l) => setState(() => _lectura = l),
+        (l) => setState(() {
+              if (l == null || l.id != _lectura?.id) _recibida = l == null ? null : widget.reloj();
+              _lectura = l;
+            }),
         onError: (Object e) => _error('Error de conexión: $e')));
     _subs.add(widget.repo.alarmas().listen(_onAlarmas,
         onError: (Object e) => _error('Error de conexión: $e')));
@@ -94,7 +98,8 @@ class _HomePageState extends State<HomePage> {
           ]),
         ),
         body: TabBarView(children: [
-          PaginaDashboard(lectura: _lectura, reloj: widget.reloj),
+          PaginaDashboard(
+              lectura: _lectura, recibida: _recibida, reloj: widget.reloj),
           PaginaAlarmas(alarmas: _alarmas, onCambio: _cambiar),
         ]),
       ),

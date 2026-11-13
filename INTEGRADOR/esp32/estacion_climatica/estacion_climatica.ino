@@ -18,16 +18,22 @@ const float TEMP_THRESHOLD = 30.0;
 
 DHT dht(DHTPIN, DHTTYPE);
 
+// Espera acotada: sin Wi-Fi la alarma local debe seguir funcionando.
 void connectWiFi() {
   WiFi.mode(WIFI_STA);
   WiFi.begin(WIFI_SSID, WIFI_PASS);
   Serial.print("Conectando a Wi-Fi");
-  while (WiFi.status() != WL_CONNECTED) {
+  for (int i = 0; i < 20 && WiFi.status() != WL_CONNECTED; i++) {
     delay(500);
     Serial.print(".");
   }
-  Serial.println("\n[OK] Conectado a la Red Wi-Fi");
+  if (WiFi.status() == WL_CONNECTED) Serial.println("
+[OK] Conectado a la Red Wi-Fi");
+  else Serial.println("
+[WARN] Sin Wi-Fi, sigo con alarma local");
 }
+
+unsigned long lastReconnect = 0;
 
 void setup() {
   Serial.begin(115200);
@@ -65,11 +71,11 @@ void loop() {
   bool isAlarm = (temp > TEMP_THRESHOLD);
   triggerLocalAlarm(isAlarm);
 
-  // Reconectar si se perdió el Wi-Fi
-  if (WiFi.status() != WL_CONNECTED) {
-    Serial.println("[WARN] Wi-Fi perdido, reconectando...");
-    WiFi.disconnect();
-    connectWiFi();
+  // Reconexión no bloqueante (máx. 1 intento cada 10 s)
+  if (WiFi.status() != WL_CONNECTED && millis() - lastReconnect > 10000) {
+    Serial.println("[WARN] Wi-Fi perdido, reintentando...");
+    WiFi.reconnect();
+    lastReconnect = millis();
   }
 
   // Envío de telemetría a Supabase

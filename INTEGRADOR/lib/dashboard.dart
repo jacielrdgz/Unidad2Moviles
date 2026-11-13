@@ -6,8 +6,10 @@ import 'modelos.dart';
 
 class PaginaDashboard extends StatefulWidget {
   final Telemetria? lectura;
+  final DateTime? recibida; // hora local en que llegó la lectura
   final DateTime Function() reloj;
-  const PaginaDashboard({super.key, required this.lectura, required this.reloj});
+  const PaginaDashboard(
+      {super.key, required this.lectura, required this.recibida, required this.reloj});
 
   @override
   State<PaginaDashboard> createState() => _PaginaDashboardState();
@@ -32,14 +34,16 @@ class _PaginaDashboardState extends State<PaginaDashboard> {
   Widget build(BuildContext context) {
     final l = widget.lectura;
     final ahora = widget.reloj();
-    final online = estaOnline(l?.createdAt, ahora);
+    final online = estaOnline(widget.recibida, ahora);
     String v(Object? x, String sufijo) => l == null
         ? 'Sin datos'
         : x == null
             ? '—'
             : '$x$sufijo';
-    final hace =
-        l == null ? '' : ' · hace ${ahora.difference(l.createdAt).inSeconds} s';
+    final seg = widget.recibida == null
+        ? 0
+        : ahora.difference(widget.recibida!).inSeconds.clamp(0, 1 << 30);
+    final hace = l == null ? '' : ' · hace $seg s';
     final alarma = l == null ? '—' : (l.localAlarm ? 'ENCENDIDA' : 'APAGADA');
 
     Widget tarjeta(String titulo, String valor, {Key? key, Color? color}) => Card(

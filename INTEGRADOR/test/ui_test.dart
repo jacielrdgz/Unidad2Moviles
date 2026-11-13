@@ -79,6 +79,21 @@ void main() {
     await cerrar(t);
   });
 
+  testWidgets('reloj del servidor adelantado/atrasado: Online y hace >= 0', (t) async {
+    await abrir(t);
+    repo.lecturas.add(lectura(ahora.subtract(const Duration(hours: 1))));
+    await t.pump();
+    expect(find.text('Online'), findsOneWidget);
+    expect(find.textContaining('hace 0 s'), findsOneWidget);
+    await cerrar(t);
+    await abrir(t);
+    repo.lecturas.add(lectura(ahora.add(const Duration(hours: 1))));
+    await t.pump();
+    expect(find.textContaining('hace -'), findsNothing);
+    expect(find.text('Online'), findsOneWidget);
+    await cerrar(t);
+  });
+
   testWidgets('temperatura critica en rojo', (t) async {
     await abrir(t);
     repo.lecturas.add(lectura(ahora, temp: 31.2));

@@ -91,6 +91,8 @@ En la pestaña **Alarmas**, cada fila ofrece los botones que aplican a su estado
   ambas tablas y cambiar solo `status`, `ack_at` y `cleared_at` de `alarmas` (Reconocer/Borrar). No puede crear
   ni borrar alarmas: solo las crea la regla.
 - `client.setInsecure()` en el ESP32 **no valida el certificado TLS**. Para publicarlo habría que usar `setCACert`.
+- La alarma local (LED + buzzer) **sigue funcionando sin Wi-Fi**: para demostrarlo apaga el router/hotspot, calienta el sensor a > 30 °C y el LED y el buzzer reaccionan igual; la telemetría se reanuda al volver la red.
+- Si la temperatura sigue alta, la alarma activa solo se actualiza (dedupe): **no** aparece un segundo SnackBar.
 - Las alertas (SnackBar) solo aparecen **con la app abierta**; no hay notificaciones push.
 
 ## Tests

@@ -58,12 +58,13 @@ for each row execute function public.regla_temperatura();
 alter table public.telemetria enable row level security;
 alter table public.alarmas enable row level security;
 
+revoke all on public.telemetria, public.alarmas from anon, authenticated;
 grant select, insert on public.telemetria to anon;
 grant select on public.alarmas to anon;
 revoke update on public.alarmas from anon;
 -- Solo las columnas que usa la app (Reconocer/Borrar); type, severity y temperature quedan protegidas.
 grant update (status, ack_at, cleared_at) on public.alarmas to anon;
-grant usage on all sequences in schema public to anon;
+grant usage on sequence public.telemetria_id_seq to anon;
 
 drop policy if exists "anon_insert" on public.telemetria;
 create policy "anon_insert" on public.telemetria for insert to anon with check (true);
